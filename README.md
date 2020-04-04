@@ -1,2 +1,2 @@
 ## Py_template
-__I am just a Python template repository!__
+__Text parser and pattern recognition.__
