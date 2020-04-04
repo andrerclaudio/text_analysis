@@ -6,6 +6,7 @@ from nltk.metrics import edit_distance
 
 replacement_patterns = [(r'won\'t', 'will not'),
                         (r'can\'t', 'cannot'),
+                        (r'gonna', 'going to'),
                         (r'i\'m', 'i am'),
                         (r'ain\'t', 'is not'),
                         (r'(\w+)\'ll', '\g<1> will'),
