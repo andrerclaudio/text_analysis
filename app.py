@@ -22,7 +22,7 @@ from text_parse import text_parser as parser
 #                     datefmt='%d/%b/%Y - %H:%M:%S')
 
 # Print in software terminal
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s | %(process)d | %(name)s | %(levelname)s:  %(message)s',
                     datefmt='%d/%b/%Y - %H:%M:%S')
 
@@ -38,9 +38,9 @@ class LanguageProcessor(object):
         """
         Download or/and update the language-neutral sentence segmentation tool
         """
-        nltk.download('punkt')
-        nltk.download('stopwords')
-        nltk.download('wordnet')
+        nltk.download('punkt', quiet=True)
+        nltk.download('stopwords', quiet=True)
+        nltk.download('wordnet', quiet=True)
 
         # Init dicts and english stopwords
         self.replacer = RegexpReplacer()
@@ -79,15 +79,16 @@ class ThreadingProcess(object):
         self.interval = interval
         self.nlp = nlp
 
-        thread = Thread(target=run, args=(self.interval, self.nlp), name='Processor')
+        thread = Thread(target=run, args=(self.nlp, self.interval), name='Processor')
         thread.daemon = True  # Daemonize thread
         thread.start()  # Start the execution
-        thread.join()
+        # thread.join()
 
 
-def run(interval, nlp):
+def run(nlp, interval=0):
     """ Method that runs forever """
     while True:
+        el = ElapsedTime()
         try:
             file = open_file()
             if file is not False:
@@ -98,7 +99,8 @@ def run(interval, nlp):
             logger.exception('{}'.format(e))
 
         finally:
-            pass
+            el.elapsed()
+            break
 
 
 def application():
@@ -107,11 +109,8 @@ def application():
 
     # NLTK initializer
     nlp = LanguageProcessor()
-
-    # Set a delay between thread call
-    process_timing = 1
     # Start processing all information
-    ThreadingProcess(process_timing, nlp)
+    run(nlp)
 
 
 def open_file():

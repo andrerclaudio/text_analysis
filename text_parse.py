@@ -17,9 +17,9 @@ def text_parser(nlp, content):
     """
     content = str(content)
 
-    if content.isprintable() or content.isspace():
-        logger.exception('{}'.format('The content is not parsable!'), exc_info=False)
-        return
+    # if content.isprintable() or content.isspace():
+    #     logger.exception('{}'.format('The content is not parsable!'), exc_info=False)
+    #     return
 
     content = content.lower()
 
@@ -31,6 +31,11 @@ def text_parser(nlp, content):
     sentences = [remove_repeated_chars(nlp, i) for i in sentences]
     # Fix misspellings words
     sentences = [fix_spelling(nlp, i) for i in sentences]
+    # Check if a sentence is parsable
+    sentences = check_sentences_sanity(sentences)
+
+    for s in sentences:
+        logger.info('{}'.format(s))
 
     return
 
@@ -71,4 +76,26 @@ def fix_spelling(nlp, stream):
     :return A string with the same words with fixed words
     """
     words = word_tokenize(stream)
-    return [nlp.spelling.replace(w) for w in words]
+    ch = [nlp.spelling.replace(w) for w in words]
+    return ' '.join(ch)
+
+
+def check_sentences_sanity(buffer):
+    """
+    Check each sentence in a list if they are parsable
+
+    :param buffer: A list with sentences
+    :type buffer: list
+    :return A list with parsable sentences
+    """
+    ph = []
+    while len(buffer) > 0:
+        t = buffer.pop()
+        if t.isalpha() or t.isspace() or not t.isnumeric:
+            logger.exception('{}'.format(t), exc_info=False)
+        else:
+            ph.append(t)
+    if len(ph) > 0:
+        ph.reverse()
+
+    return ph
