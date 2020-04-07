@@ -17,10 +17,6 @@ def text_parser(nlp, content):
     """
     content = str(content)
 
-    # if content.isprintable() or content.isspace():
-    #     logger.exception('{}'.format('The content is not parsable!'), exc_info=False)
-    #     return
-
     content = content.lower()
 
     # Normalize the content exchanging the contraction form of words with its complete format.
@@ -34,8 +30,7 @@ def text_parser(nlp, content):
     # Check if a sentence is parsable
     sentences = check_sentences_sanity(sentences)
 
-    for s in sentences:
-        logger.info('{}'.format(s))
+    [logger.info('{}'.format(s)) for s in sentences]
 
     return
 
@@ -91,7 +86,7 @@ def check_sentences_sanity(buffer):
     ph = []
     while len(buffer) > 0:
         t = buffer.pop()
-        if t.isalpha() or t.isspace() or not t.isnumeric:
+        if t.isalpha() or t.isspace() or t.isnumeric():
             logger.exception('{}'.format(t), exc_info=False)
         else:
             ph.append(t)
